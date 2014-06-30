@@ -19,6 +19,8 @@ module.exports = function (grunt) {
 	var config = {
 		src: 'src',
 		dist: 'dist',
+		mocha: 'node_modules/mocha',
+		chai: 'node_modules/chai',
 		example: 'example',
 		test: 'test'
 	};
@@ -157,6 +159,8 @@ module.exports = function (grunt) {
 					port: 9001,
 					middleware: function(connect) {
 						return [
+							connect.static(config.mocha),
+							connect.static(config.chai),
 							connect.static(config.test),
 							connect.static(config.src),
 							connect.static(config.dist)
