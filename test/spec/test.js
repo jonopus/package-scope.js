@@ -108,16 +108,26 @@
 		function testSuper(className, Class){
 			describe('super', function () {
 				var
-				instance = new Class('originalSuperValue');
+				instance = new Class('superValue', 'baseValue');
 
 				it('should exist', function(){
 					console.log('Test', className, 3.1);
 					should.exist(instance.getSomethingPrivate());
 				});
 
+				it('should exist', function(){
+					console.log('Test', className, 3.1);
+					should.exist(instance.getBaseSomethingPrivate());
+				});
+
 				it('should have overwritten method', function(){
 					console.log('Test', className, 3.2);
-					instance.getSomethingPrivate().should.equal('originalSuperValue');
+					instance.getSomethingPrivate().should.equal('superValue');
+				});
+
+				it('should reference base prop with super method', function(){
+					console.log('Test', className, 3.3);
+					instance.getBaseSomethingPrivate().should.equal('baseValue');
 				});
 
 				it('should have super', function(){
@@ -125,7 +135,7 @@
 					instance.super.should.be.a('function');
 				});
 
-				it('should have super', function(){
+				it('should have super method', function(){
 					console.log('Test', className, 3.3);
 					instance.super.getSomethingPrivate.should.be.a('function');
 				});
@@ -262,6 +272,12 @@
 
 					function BaseClass(val) {
 						privateProperty = val;
+
+						doSomethingPrivate();
+					}
+
+					function doSomethingPrivate() {
+						
 					}
 
 					function getSomethingPrivate() {
@@ -280,17 +296,31 @@
 					var
 					privateProperty;
 
-					function ClassWithSuper(val) {
+					function ClassWithSuper(val, val2) {
+						scope.super(val2);
 						privateProperty = val;
 
 						doSomethingPrivate();
+					}
+
+					function doSomethingPrivate() {
+						
 					}
 
 					function getSomethingPrivate() {
 						return privateProperty;
 					}
 
+					function getBaseSomethingPrivate() {
+						return scope.super.getSomethingPrivate();
+					}
+
+					ClassWithSuper.tryToGetSomthingPrivate = function(){
+						return privateProperty;
+					};
+
 					scope.public('getSomethingPrivate', getSomethingPrivate);
+					scope.public('getBaseSomethingPrivate', getBaseSomethingPrivate);
 					return ClassWithSuper;
 				}
 			);
