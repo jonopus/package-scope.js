@@ -42,8 +42,7 @@
 		nameSpaceString = nameSpaceElements.join('.'),
 		nameSpace = getNameSpace(nameSpaceString),
 		facade = function(){
-			var scope = this;
-			scope.methods = {};
+			this.methods = {};
 
 			var superConstructor;
 			if(descriptor.s){
@@ -55,43 +54,43 @@
 					this.called = true;
 
 					//apply super constructor;
-					getNameSpace(descriptor.s).apply(scope, arguments);
+					getNameSpace(descriptor.s).apply(this, arguments);
 
-					for(var prop in scope.methods){
-						scope.super[prop] = scope.methods[prop];
+					for(var prop in this.methods){
+						this.super[prop] = this.methods[prop];
 
 					}
 				};
 
-				if(scope.super){
-					superConstructor.super = scope.super;
+				if(this.super){
+					superConstructor.super = this.super;
 				}
-				scope.super = superConstructor;
+				this.super = superConstructor;
 			}
 			
-			scope.methods = {};
+			this.methods = {};
 
-			scope.public = function(){
+			this.public = function(){
 				if(typeof arguments[0] === 'object'){
 					var
 					publicProperties = arguments[0];
 
 					for (var prop in publicProperties) {
-						applyToScope(scope, prop, publicProperties[prop]);
-						applyToScope(scope.methods, prop, publicProperties[prop]);
+						applyToScope(this, prop, publicProperties[prop]);
+						applyToScope(this.methods, prop, publicProperties[prop]);
 					}
 				}else{
-					applyToScope(scope, arguments[0], arguments[1]);
-					applyToScope(scope.methods, arguments[0], arguments[1]);
+					applyToScope(this, arguments[0], arguments[1]);
+					applyToScope(this.methods, arguments[0], arguments[1]);
 				}
 			};
 
 			//apply constructor;
-			(descriptor.d).apply(null, getImports(descriptor, scope)).apply(scope, arguments);
+			(descriptor.d).apply(null, getImports(descriptor, this)).apply(this, arguments);
 
 			//call super if not called;
 			if(descriptor.s){
-				scope.super.apply(scope, arguments);
+				this.super.apply(this, arguments);
 			}
 		},
 		constructorStaticScope = (descriptor.d).apply(null, getImports(descriptor, facade));

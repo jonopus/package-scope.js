@@ -264,7 +264,6 @@
 		describe('class with super:', function () {
 			ps(
 				'com.ps.test.BaseClass',
-				'com.ps.test.ClassWithName',
 				['scope'],
 				function(scope){
 					var
@@ -299,12 +298,6 @@
 					function ClassWithSuper(val, val2) {
 						scope.super(val2);
 						privateProperty = val;
-
-						doSomethingPrivate();
-					}
-
-					function doSomethingPrivate() {
-						
 					}
 
 					function getSomethingPrivate() {
