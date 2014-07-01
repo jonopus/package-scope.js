@@ -3,15 +3,18 @@
 ps(
 	'com.ps.example.Main',
 	[
-		'com.ps.example.FancyMediator'
+		'scope',
+		'com.ps.example.FancyTest'
 	],
-	function(FancyMediator){
+	function(scope, FancyTest){
 		function Main() {
-			new FancyMediator();
+			console.log('Main');
+			var fancyTest = new FancyTest();
+			
+			console.log('fancyTest.getPrivateProperty', fancyTest.getPrivateProperty());
+			console.log('fancyTest.getPrivatePropertyOfTest', fancyTest.getPrivatePropertyOfTest());
 		}
 
-		return {
-			Main:Main
-		};
+		return Main;
 	}
 );

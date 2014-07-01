@@ -4,13 +4,24 @@
 */
 ps(
 	'com.ps.example.Test',
-	function(){
-		function Test() {
-			
+	[
+		'scope'
+	],
+	function(scope){
+		var privateProperty = 'privatePropertyOfTestOrigonalValue';
+
+		function Test(){
+			console.log('Test', getPrivateProperty());
 		}
 
-		return {
-			Test:Test
-		};
+		function getPrivateProperty(){
+			return privateProperty;
+		}
+
+		scope.public({
+			'getPrivateProperty': getPrivateProperty
+		});
+		return Test;
+		
 	}
 );

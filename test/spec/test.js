@@ -136,7 +136,8 @@
 			testClass(
 				'ClassAnonymous',
 				ps(
-					function(){
+					['scope'],
+					function(scope){
 						var privateProperty;
 
 						function ClassAnonymous(val) {
@@ -157,10 +158,8 @@
 							return privateProperty;
 						};
 
-						return {
-							ClassAnonymous:ClassAnonymous,
-							getSomethingPrivate:getSomethingPrivate
-						};
+						scope.public('getSomethingPrivate', getSomethingPrivate);
+						return ClassAnonymous;
 					}
 				)
 			);
@@ -169,7 +168,8 @@
 		describe('Class with name', function () {
 			ps(
 				'com.ps.test.ClassWithName',
-				function(){
+				['scope'],
+				function(scope){
 					var
 					privateProperty;
 
@@ -191,10 +191,8 @@
 						return privateProperty;
 					};
 
-					return {
-						ClassWithName:ClassWithName,
-						getSomethingPrivate:getSomethingPrivate
-					};
+					scope.public('getSomethingPrivate', getSomethingPrivate);
+					return ClassWithName;
 				}
 			);
 
@@ -205,9 +203,10 @@
 			ps(
 				'com.ps.test.ClassWithImports',
 				[
+					'scope',
 					'com.ps.test.ClassWithName'
 				],
-				function(ClassWithName){
+				function(scope, ClassWithName){
 					var
 					privateProperty,
 					ClassWithNameInstance;
@@ -238,12 +237,13 @@
 						return privateProperty;
 					};
 
-					return {
-						ClassWithImports:ClassWithImports,
+					
+					scope.public({
 						getSomethingPrivate:getSomethingPrivate,
 						getImportedClass:getImportedClass,
 						getImportedClassInstance:getImportedClassInstance
-					};
+					});
+					return ClassWithImports;
 				}
 			);
 
@@ -254,12 +254,9 @@
 		describe('class with super:', function () {
 			ps(
 				'com.ps.test.BaseClass',
-				/*
-				* Adding super is breaking the testing suite
-				* When You un comment this line the suite has fewer tests.
-				*/
 				'com.ps.test.ClassWithName',
-				function(){
+				['scope'],
+				function(scope){
 					var
 					privateProperty;
 
@@ -281,16 +278,15 @@
 						return privateProperty;
 					};
 
-					return {
-						BaseClass:BaseClass,
-						getSomethingPrivate:getSomethingPrivate
-					};
+					scope.public('getSomethingPrivate', getSomethingPrivate);
+					return BaseClass;
 				}
 			);
 			ps(
 				'com.ps.test.ClassWithSuper',
 				'com.ps.test.BaseClass',
-				function(){
+				['scope'],
+				function(scope){
 					var
 					privateProperty;
 
@@ -312,10 +308,8 @@
 						return privateProperty;
 					};
 
-					return {
-						ClassWithSuper:ClassWithSuper,
-						getSomethingPrivate:getSomethingPrivate
-					};
+					scope.public('getSomethingPrivate', getSomethingPrivate);
+					return ClassWithSuper;
 				}
 			);
 
