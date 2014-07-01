@@ -125,18 +125,23 @@
 					instance.getSomethingPrivate().should.equal('superValue');
 				});
 
-				it('should reference base prop with super method', function(){
+				it('should reference super prop with super method', function(){
 					console.log('Test', className, 3.3);
 					instance.getBaseSomethingPrivate().should.equal('baseValue');
 				});
 
+				it('should reference base prop', function(){
+					console.log('Test', className, 3.4);
+					instance.getSomethingFromBase().should.equal('fromBase');
+				});
+
 				it('should have super', function(){
-					console.log('Test', className, 3.3);
+					console.log('Test', className, 3.5);
 					instance.super.should.be.a('function');
 				});
 
 				it('should have super method', function(){
-					console.log('Test', className, 3.3);
+					console.log('Test', className, 3.6);
 					instance.super.getSomethingPrivate.should.be.a('function');
 				});
 			});
@@ -266,10 +271,27 @@
 				'com.ps.test.BaseClass',
 				['scope'],
 				function(scope){
+					function BaseClass() {
+						scope.privateBaseProperty = 'fromBase';
+					}
+
+					function getSomethingFromBase() {
+						return scope.privateBaseProperty;
+					}
+
+					scope.public('getSomethingFromBase', getSomethingFromBase);
+					return BaseClass;
+				}
+			);
+			ps(
+				'com.ps.test.MidClass',
+				'com.ps.test.BaseClass',
+				['scope'],
+				function(scope){
 					var
 					privateProperty;
 
-					function BaseClass(val) {
+					function MidClass(val) {
 						privateProperty = val;
 
 						doSomethingPrivate();
@@ -284,12 +306,12 @@
 					}
 
 					scope.public('getSomethingPrivate', getSomethingPrivate);
-					return BaseClass;
+					return MidClass;
 				}
 			);
 			ps(
 				'com.ps.test.ClassWithSuper',
-				'com.ps.test.BaseClass',
+				'com.ps.test.MidClass',
 				['scope'],
 				function(scope){
 					var

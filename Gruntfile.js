@@ -71,11 +71,13 @@ module.exports = function (grunt) {
 		
 		uglify: {
 			dist: {
+				/*
 				options: {
 					mangle:false,
 					compress:false,
 					beautify:true
 				},
+				*/
 				files: {
 					'<%= config.dist %>/ps.min.js': [
 						'<%= config.src %>/ps.js'
