@@ -42,7 +42,6 @@
 		nameSpaceString = nameSpaceElements.join('.'),
 		nameSpace = getNameSpace(nameSpaceString),
 		facade = function(){
-			console.log('className', className, descriptor.s, this.methods);
 			var scope = this;
 			scope.methods = {};
 
@@ -56,7 +55,7 @@
 					this.called = true;
 
 					//apply super constructor;
-					getNameSpace(descriptor.s).apply(this, arguments);
+					getNameSpace(descriptor.s).apply(scope, arguments);
 
 					for(var prop in scope.methods){
 						scope.super[prop] = scope.methods[prop];
@@ -64,35 +63,35 @@
 					}
 				};
 
-				if(this.super){
-					superConstructor.super = this.super;
+				if(scope.super){
+					superConstructor.super = scope.super;
 				}
-				this.super = superConstructor;
+				scope.super = superConstructor;
 			}
 			
 			scope.methods = {};
 
-			this.public = function(){
+			scope.public = function(){
 				if(typeof arguments[0] === 'object'){
 					var
 					publicProperties = arguments[0];
 
 					for (var prop in publicProperties) {
-						applyToScope(this, prop, publicProperties[prop]);
+						applyToScope(scope, prop, publicProperties[prop]);
 						applyToScope(scope.methods, prop, publicProperties[prop]);
 					}
 				}else{
-					applyToScope(this, arguments[0], arguments[1]);
+					applyToScope(scope, arguments[0], arguments[1]);
 					applyToScope(scope.methods, arguments[0], arguments[1]);
 				}
 			};
 
 			//apply constructor;
-			(descriptor.d).apply(null, getImports(descriptor, this)).apply(this, arguments);
+			(descriptor.d).apply(null, getImports(descriptor, scope)).apply(scope, arguments);
 
 			//call super if not called;
 			if(descriptor.s){
-				this.super.apply(this, arguments);
+				scope.super.apply(scope, arguments);
 			}
 		},
 		constructorStaticScope = (descriptor.d).apply(null, getImports(descriptor, facade));

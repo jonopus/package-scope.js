@@ -262,21 +262,11 @@
 
 					function BaseClass(val) {
 						privateProperty = val;
-
-						doSomethingPrivate();
 					}
 
 					function getSomethingPrivate() {
 						return privateProperty;
 					}
-
-					function doSomethingPrivate() {
-						
-					}
-
-					BaseClass.tryToGetSomthingPrivate = function(){
-						return privateProperty;
-					};
 
 					scope.public('getSomethingPrivate', getSomethingPrivate);
 					return BaseClass;
@@ -299,14 +289,6 @@
 					function getSomethingPrivate() {
 						return privateProperty;
 					}
-
-					function doSomethingPrivate() {
-						
-					}
-
-					ClassWithSuper.tryToGetSomthingPrivate = function(){
-						return privateProperty;
-					};
 
 					scope.public('getSomethingPrivate', getSomethingPrivate);
 					return ClassWithSuper;
