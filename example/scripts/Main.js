@@ -8,21 +8,21 @@ ps(
 	'com.ps.example.Animal',
 	['scope'],
 	function(scope){
-		function Animal(age){
-			console.log('Constructor Animal', scope);
-			scope.age = age;
-		}
+		var _age;
 
-		function getAge() {
-			return scope.age;
+		function getAge(){
+			return _age;
 		}
-
 		scope.public('getAge', getAge);
 
-		function thinkLikeAAnimal(){
-			console.log('Think like a Animal');
+		function Animal(age){
+			console.log('Animal', age);
+			_age = age;
 		}
 
+		function thinkLikeAAnimal(){
+			console.log('Animal', 'thinkLikeAAnimal');
+		}
 		scope.public('thinkLikeAAnimal', thinkLikeAAnimal);
 
 		return Animal;
@@ -34,22 +34,23 @@ ps(
 	'com.ps.example.Animal',
 	['scope'],
 	function(scope){
-		function Mammal(age, firstName){
-			console.log('Constructor Mammal', scope);
-			scope.super(age);
-			scope.firstName = firstName;
-		}
+		var _firstName;
 
-		function getFirstName() {
-			return scope.firstName;
+		function getFirstName(){
+			return _firstName;
 		}
-
 		scope.public('getFirstName', getFirstName);
 
-		function thinkLikeAMammal(){
-			console.log('Think like a Mammal');
+		function Mammal(firstName, age){
+			console.log('Mammal', firstName, age);
+			_firstName = firstName;
+			scope.super(age);
 		}
 
+		function thinkLikeAMammal(){
+			console.log('Mammal', 'thinkLikeAMammal');
+			scope.super.thinkLikeAAnimal();
+		}
 		scope.public('thinkLikeAMammal', thinkLikeAMammal);
 
 		return Mammal;
@@ -61,33 +62,32 @@ ps(
 	'com.ps.example.Mammal',
 	['scope'],
 	function(scope){
-		function Human(age, firstName, lastName){
-			console.log('Constructor Human', scope);
-			scope.super(age, firstName);
-			scope.lastName = lastName;
-		}
+		var _lastName;
 
-		function getLastName() {
-			return scope.lastName;
+		function getLastName(){
+			return _lastName;
 		}
-
 		scope.public('getLastName', getLastName);
 
-		function thinkLikeAHuman(){
-			console.log('Think like a Human');
+		function Human(lastName, firstName, age){
+			console.log('Human', lastName, firstName, age);
+			_lastName = lastName;
+			scope.super(firstName, age);
 		}
 
-		scope.public('thinkLikeAHuman', thinkLikeAHuman);
+		function thinkLikeAHuman(){
+			console.log('Human', 'thinkLikeAHuman');
 
-		Human.somethingStatic = function(){
-			console.log('somethingStatic');
-		};
+			scope.super.thinkLikeAMammal();
+		}
+		scope.public('thinkLikeAHuman', thinkLikeAHuman);
 
 		return Human;
 	}
 );
 
-var jon = new com.ps.example.Human('Adams', 'Jon', 23);
-console.log(jon, jon.getAge(), jon.getFirstName(), jon.getLastName());
-
-com.ps.example.Human.somethingStatic();
+var jon = new com.ps.example.Human('Adams', 'Jon', 32);
+console.log(jon);
+console.log(jon.getLastName());
+console.log(jon.getFirstName());
+console.log(jon.getAge());
