@@ -13,8 +13,7 @@ com
 
 (function () {
 	describe('Package Scope JS', function () {
-		it('should exist', function(){
-			console.log('Test', 1);
+		it('1, should exist', function(){
 			ps.should.be.a('function');
 			packageScope.should.be.a('function');
 			packagescope.should.be.a('function');
@@ -25,19 +24,16 @@ com
 				
 		function testClass(className, Class){
 
-			it('should exist', function(){
-				console.log('Test', className, 1.1);
+			it(className + ' 1.1, should exist', function(){
 				Class.should.be.a('function');
 			});
 
-			it('should do something static', function(){
-				console.log('Test', className, 1.2);
+			it(className + ' 1.2, should do something static', function(){
 				Class.tryToGetSomthingPrivate.should.be.a('function');
 			});
 			
 			describe('private property accessed statically', function () {
-				it('should not exist', function(){
-					console.log('Test', className, 1.3);
+				it(className + ' 1.3, should not exist', function(){
 					var propertyAccessedStatically = Class.tryToGetSomthingPrivate();
 					assert.equal(propertyAccessedStatically, undefined);
 				});
@@ -47,36 +43,25 @@ com
 				var
 				instance;
 
-				it('should instantiate', function(){
-					console.log('Test', className, 1.4);
+				it(className + ' 1.4, should instantiate', function(){
 					expect(function(){
 						instance = new Class('Instance A');
 					}).to.not.throw(Error);
 				});
 
-				it('should exist', function(){
-					console.log('Test', className, 1.5);
+				it(className + ' 1.5, should exist', function(){
 					instance.should.be.a('object');
 				});
 
-				it('should be instance of correct Class', function(){
-					console.log('Test', className, 1.6);
-
-					console.log('');
-					console.log('instance', instance);
-					console.log('');
-					console.log('Class', Class);
-					console.log('');
+				it(className + ' 1.6, should be instance of correct Class', function(){
 					assert.equal(instance instanceof Class, true);
 				});
 
-				it('should do something public', function(){
-					console.log('Test', className, 1.7);
+				it(className + ' 1.7, should do something public', function(){
 					instance.getSomethingPrivate.should.be.a('function');
 				});
 
-				it('should not do something private', function(){
-					console.log('Test', className, 1.8);
+				it(className + ' 1.8, should not do something private', function(){
 					should.not.exist(instance.doSomethingPrivate);
 				});
 
@@ -88,23 +73,19 @@ com
 				var
 				instance = new Class('Instance A');
 
-				it('should exist', function(){
-					console.log('Test', className, 2.1);
+				it(className + ' 2.1, should exist', function(){
 					should.exist(instance.getImportedClass());
 				});
 
-				it('should exist', function(){
-					console.log('Test', className, 2.2);
+				it(className + ' 2.2, should exist', function(){
 					should.exist(com.ps.test.ClassWithName);
 				});
 
-				it('should be instance of correct Class', function(){
-					console.log('Test', className, 2.3);
+				it(className + ' 2.3, should be instance of correct Class', function(){
 					assert.equal(instance.getImportedClassInstance() instanceof com.ps.test.ClassWithName, true);
 				});
 
-				it('should be reference to correct Class', function(){
-					console.log('Test', className, 2.4);
+				it(className + ' 2.4, should be reference to correct Class', function(){
 					assert.equal(instance.getImportedClass() === com.ps.test.ClassWithName, true);
 				});
 			});
@@ -115,38 +96,31 @@ com
 				var
 				instance = new Class('superValue', 'baseValue');
 
-				it('should exist', function(){
-					console.log('Test', className, 3.1);
+				it(className + ' 3.1, should exist', function(){
 					should.exist(instance.getSomethingPrivate());
 				});
 
-				it('should exist', function(){
-					console.log('Test', className, 3.1);
+				it(className + ' 3.1, should exist', function(){
 					should.exist(instance.getBaseSomethingPrivate());
 				});
 
-				it('should have overwritten method', function(){
-					console.log('Test', className, 3.2);
+				it(className + ' 3.2, should have overwritten method', function(){
 					instance.getSomethingPrivate().should.equal('superValue');
 				});
 
-				it('should reference super prop with super method', function(){
-					console.log('Test', className, 3.3);
+				it(className + ' 3.3, should reference super prop with super method', function(){
 					instance.getBaseSomethingPrivate().should.equal('baseValue');
 				});
 
-				it('should reference base prop', function(){
-					console.log('Test', className, 3.4);
+				it(className + ' 3.4, should reference base prop', function(){
 					instance.getSomethingFromBase().should.equal('fromBase');
 				});
 
-				it('should have super', function(){
-					console.log('Test', className, 3.5);
+				it(className + ' 3.5, should have super', function(){
 					instance.super.should.be.a('function');
 				});
 
-				it('should have super method', function(){
-					console.log('Test', className, 3.6);
+				it(className + ' 3.6, should have super method', function(){
 					instance.super.getSomethingPrivate.should.be.a('function');
 				});
 			});
@@ -222,19 +196,17 @@ com
 		describe('Class with imports', function () {
 			ps(
 				'com.ps.test.ClassWithImports',
-				[
-					'scope',
-					'com.ps.test.ClassWithName'
-				],
+				['scope', com.ps.test.ClassWithName],
 				function(scope, ClassWithName){
 					var
 					privateProperty,
-					ClassWithNameInstance;
+					ImportedClass;
 
 					function ClassWithImports(val) {
 						privateProperty = val;
-						ClassWithNameInstance = new ClassWithName();
 						doSomethingPrivate();
+
+						ImportedClass = ClassWithName;
 					}
 
 					function getSomethingPrivate() {
@@ -246,23 +218,20 @@ com
 					}
 
 					function getImportedClass() {
-						return ClassWithName;
+						return ImportedClass;
 					}
+					scope.public('getImportedClass', getImportedClass);
 
 					function getImportedClassInstance() {
-						return ClassWithNameInstance;
+						return new ImportedClass();
 					}
+					scope.public('getImportedClassInstance', getImportedClassInstance);
 
 					ClassWithImports.tryToGetSomthingPrivate = function(){
 						return privateProperty;
 					};
 
-					
-					scope.public({
-						getSomethingPrivate:getSomethingPrivate,
-						getImportedClass:getImportedClass,
-						getImportedClassInstance:getImportedClassInstance
-					});
+					scope.public('getSomethingPrivate', getSomethingPrivate);
 					return ClassWithImports;
 				}
 			);
@@ -307,6 +276,7 @@ com
 					}
 
 					function getSomethingPrivate() {
+						console.log('MidClass.getSomethingPrivate', privateProperty);
 						return privateProperty;
 					}
 
@@ -328,6 +298,7 @@ com
 					}
 
 					function getSomethingPrivate() {
+						console.log('ClassWithSuper.getSomethingPrivate', privateProperty);
 						return privateProperty;
 					}
 

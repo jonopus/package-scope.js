@@ -39,59 +39,54 @@
 		nameSpaceElements = descriptor.f.split('.'),
 		className = nameSpaceElements.pop(),
 		nameSpaceString = nameSpaceElements.join('.'),
-		nameSpace = getNameSpace(nameSpaceString),
-		SuperFacade;
+		nameSpace = getNameSpace(nameSpaceString);
 		
 		function Facade(){
 			if(arguments[0] === doNothing){
 				return;
 			}
 
-			this.public = function(name, value){
+			var _this = this,
+			scope = {this:this, className:className};
+
+			if(descriptor.s){
+				scope.super = function(){
+					if(scope.super.called){
+						return _this.className;
+					}
+					
+					scope.super.called = true;
+					getNameSpace(descriptor.s).apply(_this, arguments);
+				};
+			}
+
+			var _public = function(name, value){
 				if(typeof arguments[0] === 'object'){
 					var object = arguments[0];
 					for(var prop in object){
-						this.public(prop, object[prop]);
+						_this.public(prop, object[prop]);
 					}
 				}else{
-					if(!this[name]){
-						this[name] = value;
+					if(!_this[name]){
+						_this[name] = value;
+					}
+					console.log('_super', _this._super, name);
+					if(_this._super){
+						_this._super[name] = value;
 					}
 					Facade.prototype[name] = value;
 				}
 			};
-
-			if(descriptor.s){
-
-				var SuperConstructor = getNameSpace(descriptor.s);
-				
-				Facade.prototype = new SuperConstructor(doNothing);
-				Facade.prototype.constructor = SuperConstructor;
-				
-
-				SuperFacade = function(){
-					if(this.super.called){
-						return this.className;
-					}
-					
-					this.super.called = true;
-					SuperConstructor.apply(this, arguments);
-
-					for(var prop in Facade.prototype){
-						if(!this.super[prop]){
-							this.super[prop] = Facade.prototype[prop];
-						}
-					}
-				};
-
-				this.super = SuperFacade;
-			}
-
-			(descriptor.d).apply(null, getImports(descriptor, this)).apply(this, arguments);
 			
-			if(this.super){
-				this.super.apply(this, arguments);
+			scope.public = _public;
+
+			(descriptor.d).apply(null, getImports(descriptor, scope)).apply(this, arguments);
+			
+			if(scope.super){
+				scope.super.apply(this, arguments);
 			}
+
+			_this._super = scope.super;
 		}
 
 		var StaticConstructor = (descriptor.d).apply(null, getImports(descriptor, Facade));

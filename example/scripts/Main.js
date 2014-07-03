@@ -9,10 +9,7 @@ ps(
 	['scope'],
 	function(scope){
 		function Animal(age){
-			console.log('Constructor Animal', arguments);
-
-			console.log('Animal', 'I think', getHowIthink());
-
+			console.log('Constructor Animal', scope);
 			scope.age = age;
 		}
 
@@ -22,12 +19,11 @@ ps(
 
 		scope.public('getAge', getAge);
 
-		function getHowIthink(){
-			console.log('Animal getHowIthink', scope.super());
-			return 'like an Animal';
+		function thinkLikeAAnimal(){
+			console.log('Think like a Animal');
 		}
 
-		scope.public('getHowIthink', getHowIthink);
+		scope.public('thinkLikeAAnimal', thinkLikeAAnimal);
 
 		return Animal;
 	}
@@ -39,11 +35,8 @@ ps(
 	['scope'],
 	function(scope){
 		function Mammal(age, firstName){
-			console.log('Constructor Mammal', arguments);
+			console.log('Constructor Mammal', scope);
 			scope.super(age);
-
-			console.log('Mammal', 'I think', getHowIthink());
-
 			scope.firstName = firstName;
 		}
 
@@ -53,12 +46,11 @@ ps(
 
 		scope.public('getFirstName', getFirstName);
 
-		function getHowIthink(){
-			console.log('Mammal getHowIthink', scope.super());
-			return 'like a Mammal';
+		function thinkLikeAMammal(){
+			console.log('Think like a Mammal');
 		}
 
-		scope.public('getHowIthink', getHowIthink);
+		scope.public('thinkLikeAMammal', thinkLikeAMammal);
 
 		return Mammal;
 	}
@@ -70,11 +62,8 @@ ps(
 	['scope'],
 	function(scope){
 		function Human(age, firstName, lastName){
-			console.log('Constructor Human', arguments);
+			console.log('Constructor Human', scope);
 			scope.super(age, firstName);
-
-			console.log('Human', 'I think', getHowIthink());
-
 			scope.lastName = lastName;
 		}
 
@@ -84,12 +73,11 @@ ps(
 
 		scope.public('getLastName', getLastName);
 
-		function getHowIthink(){
-			console.log('Human getHowIthink', scope.super());
-			return 'like a Human';
+		function thinkLikeAHuman(){
+			console.log('Think like a Human');
 		}
 
-		scope.public('getHowIthink', getHowIthink);
+		scope.public('thinkLikeAHuman', thinkLikeAHuman);
 
 		Human.somethingStatic = function(){
 			console.log('somethingStatic');
