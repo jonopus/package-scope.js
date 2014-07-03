@@ -1,6 +1,8 @@
 'use strict';
 /* global
 describe,
+assert,
+expect,
 it,
 should,
 ps,
@@ -20,74 +22,74 @@ com
 			ps.should.equal(packagescope);
 		});
 				
-		// function testClass(className, Class){
+		function testClass(className, Class){
 
-		// 	it(className + ' 1.1, should exist', function(){
-		// 		Class.should.be.a('function');
-		// 	});
+			it(className + ' 1.1, should exist', function(){
+				Class.should.be.a('function');
+			});
 
-		// 	it(className + ' 1.2, should do something static', function(){
-		// 		Class.tryToGetSomthingPrivate.should.be.a('function');
-		// 	});
+			it(className + ' 1.2, should do something static', function(){
+				Class.tryToGetSomthingPrivate.should.be.a('function');
+			});
 			
-		// 	describe('private property accessed statically', function () {
-		// 		it(className + ' 1.3, should not exist', function(){
-		// 			var propertyAccessedStatically = Class.tryToGetSomthingPrivate();
-		// 			assert.equal(propertyAccessedStatically, undefined);
-		// 		});
-		// 	});
+			describe('private property accessed statically', function () {
+				it(className + ' 1.3, should not exist', function(){
+					var propertyAccessedStatically = Class.tryToGetSomthingPrivate();
+					assert.equal(propertyAccessedStatically, undefined);
+				});
+			});
 
-		// 	describe('instance', function () {
-		// 		var
-		// 		instance;
+			describe('instance', function () {
+				var
+				instance;
 
-		// 		it(className + ' 1.4, should instantiate', function(){
-		// 			expect(function(){
-		// 				instance = new Class('Instance A');
-		// 			}).to.not.throw(Error);
-		// 		});
+				it(className + ' 1.4, should instantiate', function(){
+					expect(function(){
+						instance = new Class('Instance A');
+					}).to.not.throw(Error);
+				});
 
-		// 		it(className + ' 1.5, should exist', function(){
-		// 			instance.should.be.a('object');
-		// 		});
+				it(className + ' 1.5, should exist', function(){
+					instance.should.be.a('object');
+				});
 
-		// 		it(className + ' 1.6, should be instance of correct Class', function(){
-		// 			assert.equal(instance instanceof Class, true);
-		// 		});
+				it(className + ' 1.6, should be instance of correct Class', function(){
+					assert.equal(instance instanceof Class, true);
+				});
 
-		// 		it(className + ' 1.7, should do something public', function(){
-		// 			instance.getSomethingPrivate.should.be.a('function');
-		// 		});
+				it(className + ' 1.7, should do something public', function(){
+					instance.getSomethingPrivate.should.be.a('function');
+				});
 
-		// 		it(className + ' 1.8, should not do something private', function(){
-		// 			should.not.exist(instance.doSomethingPrivate);
-		// 		});
+				it(className + ' 1.8, should not do something private', function(){
+					should.not.exist(instance.doSomethingPrivate);
+				});
 
-		// 	});
-		// }
+			});
+		}
 		
-		// function testImports(className, Class){
-		// 	describe('import', function () {
-		// 		var
-		// 		instance = new Class('Instance A');
+		function testImports(className, Class){
+			describe('import', function () {
+				var
+				instance = new Class('Instance A');
 
-		// 		it(className + ' 2.1, should exist', function(){
-		// 			should.exist(instance.getImportedClass());
-		// 		});
+				it(className + ' 2.1, should exist', function(){
+					should.exist(instance.getImportedClass());
+				});
 
-		// 		it(className + ' 2.2, should exist', function(){
-		// 			should.exist(com.ps.test.ClassWithName);
-		// 		});
+				it(className + ' 2.2, should exist', function(){
+					should.exist(com.ps.test.ClassWithName);
+				});
 
-		// 		it(className + ' 2.3, should be instance of correct Class', function(){
-		// 			assert.equal(instance.getImportedClassInstance() instanceof com.ps.test.ClassWithName, true);
-		// 		});
+				it(className + ' 2.3, should be instance of correct Class', function(){
+					assert.equal(instance.getImportedClassInstance() instanceof com.ps.test.ClassWithName, true);
+				});
 
-		// 		it(className + ' 2.4, should be reference to correct Class', function(){
-		// 			assert.equal(instance.getImportedClass() === com.ps.test.ClassWithName, true);
-		// 		});
-		// 	});
-		// }
+				it(className + ' 2.4, should be reference to correct Class', function(){
+					assert.equal(instance.getImportedClass() === com.ps.test.ClassWithName, true);
+				});
+			});
+		}
 		
 		function testSuper(className, Class){
 			describe('super', function () {
@@ -99,150 +101,142 @@ com
 					instance = new Class('superValue', 'baseValue');
 				});
 
-				// it(className + ' 3.2, should exist', function(){
-				// 	should.exist(instance.getSomethingPrivate());
-				// });
+				it(className + ' 3.2, should exist', function(){
+					should.exist(instance.getSomethingPrivate());
+				});
 
 				it(className + ' 3.3, should exist', function(){
 					console.log('instance.getBaseSomethingPrivate()', instance.getBaseSomethingPrivate());
 					should.exist(instance.getBaseSomethingPrivate());
 				});
 
-				// it(className + ' 3.4, should have overwritten method', function(){
-				// 	instance.getSomethingPrivate().should.equal('superValue');
-				// });
+				it(className + ' 3.4, should have overwritten method', function(){
+					instance.getSomethingPrivate().should.equal('superValue');
+				});
 
-				// it(className + ' 3.5, should reference super prop with super method', function(){
-				// 	instance.getBaseSomethingPrivate().should.equal('baseValue');
-				// });
+				it(className + ' 3.5, should reference super prop with super method', function(){
+					instance.getBaseSomethingPrivate().should.equal('baseValue');
+				});
 
-				// it(className + ' 3.6, should reference base prop', function(){
-				// 	instance.getSomethingFromBase().should.equal('fromBase');
-				// });
-
-				// it(className + ' 3.7, should have super', function(){
-				// 	instance.super.should.be.a('function');
-				// });
-
-				// it(className + ' 3.8, should have super method', function(){
-				// 	instance.super.getSomethingPrivate.should.be.a('function');
-				// });
+				it(className + ' 3.6, should reference base prop', function(){
+					instance.getSomethingFromBase().should.equal('fromBase');
+				});
 			});
 		}
 		
-		// describe('Class that is anonymous', function () {
-		// 	testClass(
-		// 		'ClassAnonymous',
-		// 		ps(
-		// 			['scope'],
-		// 			function(scope){
-		// 				var privateProperty;
+		describe('Class that is anonymous', function () {
+			testClass(
+				'ClassAnonymous',
+				ps(
+					['scope'],
+					function(scope){
+						var privateProperty;
 
-		// 				function ClassAnonymous(val) {
-		// 					privateProperty = val;
+						function ClassAnonymous(val) {
+							privateProperty = val;
 
-		// 					doSomethingPrivate();
-		// 				}
+							doSomethingPrivate();
+						}
 
-		// 				function getSomethingPrivate() {
-		// 					return privateProperty;
-		// 				}
+						function getSomethingPrivate() {
+							return privateProperty;
+						}
 
-		// 				function doSomethingPrivate() {
+						function doSomethingPrivate() {
 							
-		// 				}
+						}
 
-		// 				ClassAnonymous.tryToGetSomthingPrivate = function(){
-		// 					return privateProperty;
-		// 				};
+						ClassAnonymous.tryToGetSomthingPrivate = function(){
+							return privateProperty;
+						};
 
-		// 				scope.public('getSomethingPrivate', getSomethingPrivate);
-		// 				return ClassAnonymous;
-		// 			}
-		// 		)
-		// 	);
-		// });
+						scope.public('getSomethingPrivate', getSomethingPrivate);
+						return ClassAnonymous;
+					}
+				)
+			);
+		});
 		
-		// describe('Class with name', function () {
-		// 	ps(
-		// 		'com.ps.test.ClassWithName',
-		// 		['scope'],
-		// 		function(scope){
-		// 			var
-		// 			privateProperty;
+		describe('Class with name', function () {
+			ps(
+				'com.ps.test.ClassWithName',
+				['scope'],
+				function(scope){
+					var
+					privateProperty;
 
-		// 			function ClassWithName(val) {
-		// 				privateProperty = val;
+					function ClassWithName(val) {
+						privateProperty = val;
 
-		// 				doSomethingPrivate();
-		// 			}
+						doSomethingPrivate();
+					}
 
-		// 			function getSomethingPrivate() {
-		// 				return privateProperty;
-		// 			}
+					function getSomethingPrivate() {
+						return privateProperty;
+					}
 
-		// 			function doSomethingPrivate() {
+					function doSomethingPrivate() {
 						
-		// 			}
+					}
 
-		// 			ClassWithName.tryToGetSomthingPrivate = function(){
-		// 				return privateProperty;
-		// 			};
+					ClassWithName.tryToGetSomthingPrivate = function(){
+						return privateProperty;
+					};
 
-		// 			scope.public('getSomethingPrivate', getSomethingPrivate);
-		// 			return ClassWithName;
-		// 		}
-		// 	);
+					scope.public('getSomethingPrivate', getSomethingPrivate);
+					return ClassWithName;
+				}
+			);
 
-		// 	testClass('ClassWithName', com.ps.test.ClassWithName);
-		// });
+			testClass('ClassWithName', com.ps.test.ClassWithName);
+		});
 		
-		// describe('Class with imports', function () {
-		// 	ps(
-		// 		'com.ps.test.ClassWithImports',
-		// 		['scope', com.ps.test.ClassWithName],
-		// 		function(scope, ClassWithName){
-		// 			var
-		// 			privateProperty,
-		// 			ImportedClass;
+		describe('Class with imports', function () {
+			ps(
+				'com.ps.test.ClassWithImports',
+				['scope', com.ps.test.ClassWithName],
+				function(scope, ClassWithName){
+					var
+					privateProperty,
+					ImportedClass;
 
-		// 			function ClassWithImports(val) {
-		// 				privateProperty = val;
-		// 				doSomethingPrivate();
+					function ClassWithImports(val) {
+						privateProperty = val;
+						doSomethingPrivate();
 
-		// 				ImportedClass = ClassWithName;
-		// 			}
+						ImportedClass = ClassWithName;
+					}
 
-		// 			function getSomethingPrivate() {
-		// 				return privateProperty;
-		// 			}
+					function getSomethingPrivate() {
+						return privateProperty;
+					}
 
-		// 			function doSomethingPrivate() {
+					function doSomethingPrivate() {
 						
-		// 			}
+					}
 
-		// 			function getImportedClass() {
-		// 				return ImportedClass;
-		// 			}
-		// 			scope.public('getImportedClass', getImportedClass);
+					function getImportedClass() {
+						return ImportedClass;
+					}
+					scope.public('getImportedClass', getImportedClass);
 
-		// 			function getImportedClassInstance() {
-		// 				return new ImportedClass();
-		// 			}
-		// 			scope.public('getImportedClassInstance', getImportedClassInstance);
+					function getImportedClassInstance() {
+						return new ImportedClass();
+					}
+					scope.public('getImportedClassInstance', getImportedClassInstance);
 
-		// 			ClassWithImports.tryToGetSomthingPrivate = function(){
-		// 				return privateProperty;
-		// 			};
+					ClassWithImports.tryToGetSomthingPrivate = function(){
+						return privateProperty;
+					};
 
-		// 			scope.public('getSomethingPrivate', getSomethingPrivate);
-		// 			return ClassWithImports;
-		// 		}
-		// 	);
+					scope.public('getSomethingPrivate', getSomethingPrivate);
+					return ClassWithImports;
+				}
+			);
 
-		// 	testClass('ClassWithImports', com.ps.test.ClassWithImports);
-		// 	testImports('ClassWithImports', com.ps.test.ClassWithImports);
-		// });
+			testClass('ClassWithImports', com.ps.test.ClassWithImports);
+			testImports('ClassWithImports', com.ps.test.ClassWithImports);
+		});
 		
 		describe('class with super:', function () {
 			ps(
@@ -319,7 +313,7 @@ com
 				}
 			);
 
-			// testClass('ClassWithSuper', com.ps.test.ClassWithSuper);
+			testClass('ClassWithSuper', com.ps.test.ClassWithSuper);
 			testSuper('ClassWithSuper', com.ps.test.ClassWithSuper);
 		});
 	});

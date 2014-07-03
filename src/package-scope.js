@@ -69,12 +69,12 @@
 
 					var applyToScope = function(){
 						return function(){
-							value.apply(_this, arguments);
+							return value.apply(_this, arguments);
 						};
 					};
 
-					if(!Facade.prototype[name]){
-						Facade.prototype[name] = value;
+					if(!_this[name]){
+						_this[name] = applyToScope();
 					}
 					methods[name] = applyToScope();
 				}
@@ -102,7 +102,7 @@
 			if(scope.super){
 				scope.super.apply(_this, arguments);
 			}
-
+			
 			_this.methods = methods;
 
 			return _this;
