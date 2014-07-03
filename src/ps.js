@@ -35,84 +35,87 @@
 	}
 
 	function getFacade(descriptor){
-
 		var
 		nameSpaceElements = descriptor.f.split('.'),
 		className = nameSpaceElements.pop(),
 		nameSpaceString = nameSpaceElements.join('.'),
 		nameSpace = getNameSpace(nameSpaceString),
-		facade = function(){
-			this.methods = {};
-
-			var superConstructor;
-			if(descriptor.s){
-				superConstructor = function(){
-					if(this.called){
-						return;
-					}
-
-					this.called = true;
-
-					//apply super constructor;
-					getNameSpace(descriptor.s).apply(this, arguments);
-
-					for(var prop in this.methods){
-						this.super[prop] = this.methods[prop];
-
-					}
-				};
-
-				if(this.super){
-					superConstructor.super = this.super;
-				}
-				this.super = superConstructor;
+		SuperFacade;
+		
+		function Facade(){
+			if(arguments[0] === doNothing){
+				return;
 			}
-			
-			this.methods = {};
 
-			this.public = function(){
+			this.public = function(name, value){
 				if(typeof arguments[0] === 'object'){
-					var
-					publicProperties = arguments[0];
-
-					for (var prop in publicProperties) {
-						applyToScope(this, prop, publicProperties[prop]);
-						applyToScope(this.methods, prop, publicProperties[prop]);
+					var object = arguments[0];
+					for(var prop in object){
+						this.public(prop, object[prop]);
 					}
 				}else{
-					applyToScope(this, arguments[0], arguments[1]);
-					applyToScope(this.methods, arguments[0], arguments[1]);
+					if(!this[name]){
+						this[name] = value;
+					}
+					Facade.prototype[name] = value;
 				}
 			};
 
-			//apply constructor;
-			(descriptor.d).apply(null, getImports(descriptor, this)).apply(this, arguments);
-
-			//call super if not called;
 			if(descriptor.s){
+
+				var SuperConstructor = getNameSpace(descriptor.s);
+				
+				Facade.prototype = new SuperConstructor(doNothing);
+				Facade.prototype.constructor = SuperConstructor;
+				
+
+				SuperFacade = function(){
+					if(this.super.called){
+						return this.className;
+					}
+					
+					this.super.called = true;
+					SuperConstructor.apply(this, arguments);
+
+					for(var prop in Facade.prototype){
+						if(!this.super[prop]){
+							this.super[prop] = Facade.prototype[prop];
+						}
+					}
+				};
+
+				this.super = SuperFacade;
+			}
+
+			(descriptor.d).apply(null, getImports(descriptor, this)).apply(this, arguments);
+			
+			if(this.super){
 				this.super.apply(this, arguments);
 			}
-		},
-		constructorStaticScope = (descriptor.d).apply(null, getImports(descriptor, facade));
+		}
+
+		var StaticConstructor = (descriptor.d).apply(null, getImports(descriptor, Facade));
+
+		for(var prop in StaticConstructor){
+			Facade[prop] = StaticConstructor[prop];
+		}
 
 		if(nameSpaceString && nameSpaceString.length){
-			nameSpace[className] = facade;
+			nameSpace[className] = Facade;
 		}
 
-		for (var prop in constructorStaticScope) {
-			facade[prop] = constructorStaticScope[prop];
-		}
-
-		return facade;
+		return Facade;
 	}
 
-	function applyToScope(scope, prop, value){
-		if(!scope[prop]){
-			scope[prop] = value;
-		}
-	}
+	function getNameSpace(nameSpaceString, scope){
 
-	function getNameSpace(nameSpaceString){
+		if(nameSpaceString === 'scope'){
+			if(typeof scope === 'function'){
+				return {public:doNothing};
+			}else{
+				return scope;
+			}
+		}
 
 		if(!nameSpaceString || !nameSpaceString.length){
 			return null;
@@ -127,8 +130,6 @@
 
 		return ns;
 	}
-	
-	function doNothing(){}
 
 	function getImports(descriptor, scope){
 		
@@ -136,23 +137,26 @@
 
 		if(descriptor.i){
 			for (var i = 0; i < descriptor.i.length; i++) {
-				var referenceName = descriptor.i[i],
-				reference = getNameSpace(referenceName) || referenceName;
-
-				if(referenceName === 'scope'){
-					if(typeof scope === 'function'){
-						reference = {public:doNothing};
-					}else{
-						reference = scope;
-					}
-				}
-
-				generatedImports.push(reference);
+				var referenceName = descriptor.i[i];
+				generatedImports.push(getNameSpace(referenceName, scope) || referenceName);
 			}
 		}
 
 		return generatedImports;
 	}
+
+	function doNothing(){}
+
+	/*
+
+	function applyToScope(scope, prop, value){
+		if(!scope[prop]){
+			scope[prop] = value;
+		}
+	}
+	
+
+	*/
 
 	window.ps =
 	window.packageScope =

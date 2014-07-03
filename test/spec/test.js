@@ -1,14 +1,14 @@
 'use strict';
 /* global
-	describe,
-	it,
-	should,
-	assert,
-	expect,
-	ps,
-	packageScope,
-	packagescope,
-	com
+describe,
+it,
+assert,
+expect,
+should,
+ps,
+packageScope,
+packagescope,
+com
  */
 
 (function () {
@@ -36,10 +36,9 @@
 			});
 			
 			describe('private property accessed statically', function () {
-				var propertyAccessedStatically = Class.tryToGetSomthingPrivate();
-				
 				it('should not exist', function(){
 					console.log('Test', className, 1.3);
+					var propertyAccessedStatically = Class.tryToGetSomthingPrivate();
 					assert.equal(propertyAccessedStatically, undefined);
 				});
 			});
@@ -62,6 +61,12 @@
 
 				it('should be instance of correct Class', function(){
 					console.log('Test', className, 1.6);
+
+					console.log('');
+					console.log('instance', instance);
+					console.log('');
+					console.log('Class', Class);
+					console.log('');
 					assert.equal(instance instanceof Class, true);
 				});
 
