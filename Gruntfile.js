@@ -35,7 +35,7 @@ module.exports = function (grunt) {
 		watch: {
 			build: {
 				files: [
-					'<%= config.src %>/ps.js',
+					'<%= config.src %>/package-scope.js',
 					'Gruntfile.js'
 				],
 				tasks: [
@@ -46,7 +46,7 @@ module.exports = function (grunt) {
 				files: [
 					'<%= config.example %>/index.html',
 					'<%= config.example %>/scripts/{,*/..}*.js',
-					'<%= config.src %>/ps.js',
+					'<%= config.src %>/package-scope.js',
 					'Gruntfile.js'
 				],
 				tasks: [
@@ -60,7 +60,7 @@ module.exports = function (grunt) {
 				files: [
 					'<%= config.test %>/spec/index.html',
 					'<%= config.test %>/spec/test.js',
-					'<%= config.src %>/ps.js',
+					'<%= config.src %>/package-scope.js',
 					'Gruntfile.js'
 				],
 				tasks: [
@@ -79,8 +79,8 @@ module.exports = function (grunt) {
 				},
 				*/
 				files: {
-					'<%= config.dist %>/ps.min.js': [
-						'<%= config.src %>/ps.js'
+					'<%= config.dist %>/package-scope.min.js': [
+						'<%= config.src %>/package-scope.js'
 					]
 				}
 			},
@@ -119,7 +119,7 @@ module.exports = function (grunt) {
 			all: [
 				'Gruntfile.js',
 				'<%= config.example %>/scripts/{,*/}*.js',
-				'<%= config.src %>/ps.js',
+				'<%= config.src %>/package-scope.js',
 				'test/spec/{,*/}*.js'
 			]
 		},

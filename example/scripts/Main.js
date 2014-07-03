@@ -22,8 +22,14 @@ ps(
 
 		function thinkLikeAAnimal(){
 			console.log('Animal', 'thinkLikeAAnimal');
+
 		}
 		scope.public('thinkLikeAAnimal', thinkLikeAAnimal);
+		function think(){
+			console.log('thinkLikeAAnimal', scope);
+			thinkLikeAAnimal();
+		}
+		scope.public('think', think);
 
 		return Animal;
 	}
@@ -48,10 +54,15 @@ ps(
 		}
 
 		function thinkLikeAMammal(){
-			console.log('Mammal', 'thinkLikeAMammal');
+			console.log('Mammal', 'thinkLikeAMammal', scope);
 			scope.super.thinkLikeAAnimal();
 		}
 		scope.public('thinkLikeAMammal', thinkLikeAMammal);
+		function think(){
+			console.log('thinkLikeAMammal', scope);
+			thinkLikeAMammal();
+		}
+		scope.public('think', think);
 
 		return Mammal;
 	}
@@ -76,11 +87,15 @@ ps(
 		}
 
 		function thinkLikeAHuman(){
-			console.log('Human', 'thinkLikeAHuman');
-
+			console.log('Human', 'thinkLikeAHuman', scope);
 			scope.super.thinkLikeAMammal();
 		}
 		scope.public('thinkLikeAHuman', thinkLikeAHuman);
+		function think(){
+			console.log('thinkLikeAHuman', scope);
+			thinkLikeAHuman();
+		}
+		scope.public('think', think);
 
 		return Human;
 	}
@@ -91,3 +106,5 @@ console.log(jon);
 console.log(jon.getLastName());
 console.log(jon.getFirstName());
 console.log(jon.getAge());
+console.log('');
+jon.think();
