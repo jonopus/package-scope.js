@@ -65,6 +65,11 @@ com
 					should.not.exist(instance.doSomethingPrivate);
 				});
 
+
+				it(className + ' 1.9, scope.this should reference self', function(){
+					instance.getThis().should.equal(instance);
+				});
+
 			});
 		}
 		
@@ -106,7 +111,6 @@ com
 				});
 
 				it(className + ' 3.3, should exist', function(){
-					console.log('instance.getBaseSomethingPrivate()', instance.getBaseSomethingPrivate());
 					should.exist(instance.getBaseSomethingPrivate());
 				});
 
@@ -120,6 +124,18 @@ com
 
 				it(className + ' 3.6, should reference base prop', function(){
 					instance.getSomethingFromBase().should.equal('fromBase');
+				});
+
+				it(className + ' 3.8, should be instanceof super Class', function(){
+					assert.equal(instance instanceof com.ps.test.MidClass, true);
+				});
+
+				it(className + ' 3.9, should be instanceof super super Class', function(){
+					assert.equal(instance instanceof com.ps.test.BaseClass, true);
+				});
+
+				it(className + ' 3.10, should not be instanceof some other Class', function(){
+					assert.equal(instance instanceof com.ps.test.ClassWithName, false);
 				});
 			});
 		}
@@ -138,19 +154,24 @@ com
 							doSomethingPrivate();
 						}
 
-						function getSomethingPrivate() {
-							return privateProperty;
-						}
-
 						function doSomethingPrivate() {
 							
 						}
+
+						function getSomethingPrivate() {
+							return privateProperty;
+						}
+						scope.public('getSomethingPrivate', getSomethingPrivate);
+
+						function getThis(){
+							return scope.this;
+						}
+						scope.public('getThis', getThis);
 
 						ClassAnonymous.tryToGetSomthingPrivate = function(){
 							return privateProperty;
 						};
 
-						scope.public('getSomethingPrivate', getSomethingPrivate);
 						return ClassAnonymous;
 					}
 				)
@@ -171,19 +192,24 @@ com
 						doSomethingPrivate();
 					}
 
-					function getSomethingPrivate() {
-						return privateProperty;
-					}
-
 					function doSomethingPrivate() {
 						
 					}
+
+					function getSomethingPrivate() {
+						return privateProperty;
+					}
+					scope.public('getSomethingPrivate', getSomethingPrivate);
+
+					function getThis(){
+						return scope.this;
+					}
+					scope.public('getThis', getThis);
 
 					ClassWithName.tryToGetSomthingPrivate = function(){
 						return privateProperty;
 					};
 
-					scope.public('getSomethingPrivate', getSomethingPrivate);
 					return ClassWithName;
 				}
 			);
@@ -207,13 +233,14 @@ com
 						ImportedClass = ClassWithName;
 					}
 
-					function getSomethingPrivate() {
-						return privateProperty;
-					}
-
 					function doSomethingPrivate() {
 						
 					}
+
+					function getSomethingPrivate() {
+						return privateProperty;
+					}
+					scope.public('getSomethingPrivate', getSomethingPrivate);
 
 					function getImportedClass() {
 						return ImportedClass;
@@ -225,11 +252,15 @@ com
 					}
 					scope.public('getImportedClassInstance', getImportedClassInstance);
 
+					function getThis(){
+						return scope.this;
+					}
+					scope.public('getThis', getThis);
+
 					ClassWithImports.tryToGetSomthingPrivate = function(){
 						return privateProperty;
 					};
 
-					scope.public('getSomethingPrivate', getSomethingPrivate);
 					return ClassWithImports;
 				}
 			);
@@ -252,6 +283,12 @@ com
 					}
 
 					scope.public('getSomethingFromBase', getSomethingFromBase);
+
+					function getThis(){
+						return scope.this;
+					}
+
+					scope.public('getThis', getThis);
 					return BaseClass;
 				}
 			);
@@ -274,11 +311,16 @@ com
 					}
 
 					function getSomethingPrivate() {
-						console.log('MidClass.getSomethingPrivate', privateProperty);
 						return privateProperty;
 					}
 
 					scope.public('getSomethingPrivate', getSomethingPrivate);
+
+					function getThis(){
+						return scope.this;
+					}
+
+					scope.public('getThis', getThis);
 					return MidClass;
 				}
 			);
@@ -298,17 +340,22 @@ com
 					function getSomethingPrivate() {
 						return privateProperty;
 					}
+					scope.public('getSomethingPrivate', getSomethingPrivate);
 
 					function getBaseSomethingPrivate() {
 						return scope.super.getSomethingPrivate();
 					}
+					scope.public('getBaseSomethingPrivate', getBaseSomethingPrivate);
+
+					function getThis(){
+						return scope.this;
+					}
+					scope.public('getThis', getThis);
 
 					ClassWithSuper.tryToGetSomthingPrivate = function(){
 						return privateProperty;
 					};
 
-					scope.public('getSomethingPrivate', getSomethingPrivate);
-					scope.public('getBaseSomethingPrivate', getBaseSomethingPrivate);
 					return ClassWithSuper;
 				}
 			);

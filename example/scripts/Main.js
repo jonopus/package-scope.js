@@ -84,6 +84,8 @@ ps(
 			console.log('Human', lastName, firstName, age);
 			_lastName = lastName;
 			scope.super(firstName, age);
+
+			console.log('super', scope.super);
 		}
 
 		function thinkLikeAHuman(){
@@ -98,6 +100,28 @@ ps(
 		scope.public('think', think);
 
 		return Human;
+	}
+);
+
+ps(
+	'com.ps.example.Insect',
+	['scope'],
+	function(scope){
+		function Insect(){
+			console.log('Insect');
+		}
+
+		function thinkLikeAInsect(){
+			console.log('Insect', 'thinkLikeAInsect', scope);
+		}
+		scope.public('thinkLikeAInsect', thinkLikeAInsect);
+		function think(){
+			console.log('thinkLikeAInsect', scope);
+			thinkLikeAInsect();
+		}
+		scope.public('think', think);
+
+		return Insect;
 	}
 );
 
