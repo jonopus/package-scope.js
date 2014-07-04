@@ -7,9 +7,25 @@ ps*/
  */
 ps(
 	'com.ps.example.Main',
-	function(){
+	[
+		'$on',
+		'app.AppFacade'
+	],
+	function(
+		on,
+		AppFacade
+	){
+		var appFacade;
+		
 		function Main(){
-			
+			appFacade = new AppFacade('todos-vanillajs');
+
+			on(window, 'load', setView);
+			on(window, 'hashchange', setView);
+		}
+
+		function setView() {
+			appFacade.controller.setView(document.location.hash);
 		}
 
 		return Main;
