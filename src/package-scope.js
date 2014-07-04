@@ -1,29 +1,33 @@
 'use strict';
 (function(){
+	var descriptor;
 
 	/**
 	 * Creates a class by creating a a descriptor and passing it to getFacade.
 	 * imports, and super class using revealing module pattern.
 	 *
-	 * @param {string}		[first string]	A fully qualified class name.
-	 * @param {string}		[second string]	A fully qualified super class name.
-	 * @param {array}		[imports]		An array of fully qualified class
-	 *										names or global functions that will
-	 *										be referenced by name and passed to
-	 *										the  closure. There is a special
-	 *										name 'scope' that will resolve to a
-	 *										scope object. The scope object has
-	 *										a reverence to the instance created
-	 *										a methods public that will expose
-	 *										private members and super
-	 * @param {function}	[closure]		A closure that returns the
-	 *										constructor function of the class.
+	 * @param {string}		[first string]
+	 *						A fully qualified class name.
+	 *						
+	 * @param {string}		[second string]
+	 *						A fully qualified super class name.
+	 *					
+	 * @param {array}		[array of nameSpaceStrings]
+	 *						An array of reference name strings that will be
+	 *						referenced by name and passed to the  closure.
+	 *						A special reference 'scope' returns a scope object.
+	 *						The scope object has a reverence to the 'this' of
+	 *						the instance a method public that will expose
+	 *						private members and a method super that calles the
+	 *						super class constructor.
+	 *					
+	 * @param {function}	[closure]
+	 *						A closure that returns the constructor function of
+	 *						the class.
 	 *
 	 * @return {Class}
 	 */
 	function packageScope(){
-
-		var descriptor = {f:''};
 
 		for (var i = 0; i < arguments.length; i++) {
 			var argument = arguments[i];
@@ -51,13 +55,20 @@
 			}
 		}
 
-		return getFacade(descriptor);
+		if(descriptor.d){
+			return getFacade(descriptor);
+		}
+
+		return packageScope;
 	}
 
 	/**
 	 * Creates a Class from a descriptor.
-	 * @param  {object}	Class descriptor.
-	 * @return {Class}
+	 * 
+	 * @param  {object}		descriptor
+	 *						An object with atrributs for creating a Class.
+	 *						
+	 * @return {class}
 	 */
 	function getFacade(descriptor){
 		var
@@ -85,12 +96,22 @@
 				if(arguments[0] === doNothing){
 					return;
 				}
-
+				
 				var
+				isSuperClass,
+				args = arguments,
 				_this = this,
-				scope = {this:this},
-				methods = {},
-				_super;
+				scope = {this:this, className:className},
+				methods = {};
+
+				/**
+				 * If called by super use passed arguments.
+				 */
+				if(args[0] === isSuper){
+					isSuperClass = true;
+					args = args[1];
+				}
+
 
 				/**
 				 * Adds methods to instance.
@@ -103,19 +124,20 @@
 						for(var prop in object){
 							scope.public(prop, object[prop]);
 						}
-					}else{
-
-						var applyToScope = function(){
-							return function(){
-								return value.apply(_this, arguments);
-							};
-						};
-
-						if(!_this[name]){
-							_this[name] = applyToScope();
-						}
-						methods[name] = applyToScope();
+						return;
 					}
+
+					var applyToScope = function(){
+						return function(){
+							return value.apply(_this, arguments);
+						};
+					};
+
+					if(!_this[name]){
+						_this[name] = applyToScope();
+					}
+
+					methods[name] = applyToScope();
 				};
 				
 				/**
@@ -127,42 +149,52 @@
 					 * Super Constructor Facade.
 					 * Methods of super class are accessabe on super.
 					 */
-					_super = function(){
+					scope.super = function(){
 						/**
 						 * Only execute once.
 						 */
-						if(_super.called){
+						if(scope.super.called){
 							return;
 						}
-						_super.called = true;
+						scope.super.called = true;
 						
-						var superMethods = SuperFacade.apply(_this, arguments).methods;
+						var
+						superInstance = SuperFacade.apply(_this, [isSuper, arguments]),
+						superMethods = superInstance.methods,
+						superSuper = superInstance.scope.super;
+						
+						delete _this.methods;
+						delete _this.scope;
 
 						for(var prop in superMethods){
-							_super[prop] = superMethods[prop];
+							scope.super[prop] = superMethods[prop];
+						}
+						if(superSuper){
+							scope.super.super = superSuper;
 						}
 					};
-
-					scope.super = _super;
 				}
 
 				/**
 				 * Get class constructor and call it passing generated imports
 				 * and apply constructor arguments.
 				 */
-				(descriptor.d).apply(null, getImports(descriptor, scope)).apply(_this, arguments);
+				(descriptor.d).apply(null, getImports(descriptor, scope)).apply(_this, args);
 
 				/**
 				 * If super has not be called, call with arguments.
 				 */
-				if(_super && !_super.called){
-					_super.apply(_this, arguments);
+				if(scope.super && !scope.super.called){
+					scope.super.apply(_this, args);
 				}
 				
 				/**
-				 * expose methods for super.
+				 * Expose methods for sub class.
 				 */
-				_this.methods = methods;
+				if(isSuperClass){
+					_this.methods = methods;
+					_this.scope = scope;
+				}
 
 				return _this;
 			};
@@ -193,13 +225,20 @@
 			nameSpace[className] = Facade;
 		}
 
+		newDescriptor();
+
 		return Facade;
 	}
 
 	/**
 	 * Gets referenced by name or if name is 'scope' return scope object.
-	 * @param  {string} nameSpaceString	Globally accessable reference or scope.
-	 * @param  {object} scope			Special scope object.
+	 * 
+	 * @param  {string}		nameSpaceString
+	 *						Globally accessable reference or scope.
+	 *						
+	 * @param  {object}		scope
+	 *						Special scope object.
+	 * 
 	 * @return {object || function}
 	 */
 	function getNameSpace(nameSpaceString, scope){
@@ -224,8 +263,12 @@
 
 	/**
 	 * Returns references from strings
-	 * @param  {object} descriptor	Class descriptor object.
-	 * @param  {object} scope		Special scope object.
+	 * 
+	 * @param  {object}		descriptor
+	 *						Class descriptor object.
+	 * @param  {object}		scope
+	 *						Special scope object.
+	 * 
 	 * @return {array}
 	 */
 	function getImports(descriptor, scope){
@@ -243,9 +286,71 @@
 	}
 
 	/**
+	 * Convience method adds imports to the descriptor.
+	 * 
+	 * @param {string}		[nameSpaceString]
+	 *						An array of fully qualified class
+	 *					
+	 * @param {array}		[array of nameSpaceStrings]
+	 *						An array of reference name strings that will be
+	 *						referenced by name and passed to the  closure.
+	 *						A special reference 'scope' returns a scope object.
+	 *						The scope object has a reverence to the 'this' of
+	 *						the instance a method public that will expose
+	 *						private members and a method super that calles the
+	 *						super class constructor.
+	 *
+	 * @return {packageScope}
+	 */
+	packageScope.import = function(nameSpaceString){
+		if(typeof arguments[0] !== 'string'){
+			var imports = arguments[0];
+			
+			for (var i = 0; i < imports.length; i++) {
+				packageScope.import(imports[i]);
+			}
+
+			return packageScope;
+		}
+
+		descriptor.i.push(nameSpaceString);
+		return packageScope;
+	};
+
+	packageScope.class = function(fullyQualifiedClassName){
+		descriptor.f = fullyQualifiedClassName;
+		return packageScope;
+	};
+
+	packageScope.extends = function(fullyQualifiedSuperClassName){
+		descriptor.s = fullyQualifiedSuperClassName;
+		return packageScope;
+	};
+
+	/**
 	 * Do nothing allows calling facade for prototype and dummy scope.
 	 */
 	function doNothing(){}
+
+	/**
+	 * Do nothing allows calling facade for prototype and dummy scope.
+	 */
+	function isSuper(){}
+
+	/**
+	 * clears the cached descriptor and created a new one with default values.
+	 */
+	function newDescriptor() {
+		descriptor = {
+			f:'',
+			i:[]
+		};
+	}
+	
+	/**
+	 * Initilise the first descriptor.
+	 */
+	newDescriptor();
 
 	window.ps =
 	window.packageScope =
